@@ -1,9 +1,11 @@
-import { type ReactNode, useEffect } from "react";
+import { memo, type ReactNode, useEffect, useState } from "react";
 import { createLocalPersister } from "tinybase/persisters/persister-browser/with-schemas";
 import { createWsSynchronizer } from "tinybase/synchronizers/synchronizer-ws-client/with-schemas";
 import { getParticipantId } from "~/lib/participantId";
 import { UiReact, indexes, metrics, relationships, store } from "~/lib/store";
 import { useWebSocket } from "~/lib/useWebSocket";
+import { SERVER_URL, WEBSOCKET_PROTOCOL } from "~/contants";
+import { Inspector } from "tinybase/ui-react-inspector";
 
 type Props = {
   boardId: string;
@@ -12,6 +14,8 @@ type Props = {
 
 export function Provider({ boardId, children }: Props) {
   const participantId = getParticipantId();
+
+  const [takingLongTime, setTakingLongTime] = useState(false);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Participant need to be re-registered when the board changes.
   useEffect(() => {
@@ -46,8 +50,11 @@ export function Provider({ boardId, children }: Props) {
   );
 
   const webSocket = useWebSocket(
-    boardId ? `wss://tinybase-synchronizer.crz.li/hindsight/${boardId}` : "",
+    boardId ? `${WEBSOCKET_PROTOCOL}://${SERVER_URL}/${boardId}` : "",
   );
+  setTimeout(() => {
+    if(!webSocket) setTakingLongTime(true);
+  }, 1500);
 
   UiReact.useCreateSynchronizer(
     store,
@@ -55,13 +62,21 @@ export function Provider({ boardId, children }: Props) {
       if (!webSocket) {
         return;
       }
-
+      
       const synchronizer = await createWsSynchronizer(store, webSocket);
       synchronizer.startSync();
       return synchronizer;
     },
     [boardId, webSocket],
   );
+
+  if (takingLongTime && !webSocket) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-lg text-gray-500 text-center">The server is starting up. <br/> This should take no more than 10 seconds.</div>
+      </div>
+    )
+  }
 
   if (!webSocket) {
     return null;

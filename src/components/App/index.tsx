@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Route, Switch } from "wouter";
+import { HTTP_PROTOCOL, SERVER_URL } from "~/contants";
 import Missing from "~/pages/404";
 import Board from "~/pages/Board";
 import Boards from "~/pages/Boards";
@@ -7,6 +9,11 @@ import Finished from "~/pages/Finished";
 import Welcome from "~/pages/Welcome";
 
 export function App() {
+  useEffect(() => {
+    fetch(`${HTTP_PROTOCOL}://${SERVER_URL}/wake-up`);
+    console.log("Waking up the server.");
+  }, []);
+  
   return (
     <div className="mx-auto min-w-[64rem]">
       <Switch>
