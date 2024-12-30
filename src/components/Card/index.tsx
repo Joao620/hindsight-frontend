@@ -1,13 +1,13 @@
 import { type FormEvent, type KeyboardEvent, useState } from "react";
 import { Button } from "~/components/Button";
 import { createCard } from "~/lib/createCard";
-import { createVote } from "~/lib/createVote";
+import { createId } from "~/lib/createId";
 import { deleteCard } from "~/lib/deleteCard";
-import { deleteVote } from "~/lib/deleteVote";
 import { getParticipantId } from "~/lib/participantId";
-import { updateCard } from "~/lib/updateCard";
+import { UiReact } from "~/lib/store";
 import { useCard } from "~/lib/useCard";
 import { useParticipantVoteId } from "~/lib/useParticipantVoteId";
+import { useTinyBaseObjects } from "~/lib/useTinyBaseObjects";
 import { useVoteIdsByCardId } from "~/lib/useVoteIds";
 
 type FormProps = {
@@ -84,17 +84,33 @@ export function Card({ cardId, presentation }: CardProps) {
   const { description } = useCard(cardId);
   const voteIds = useVoteIdsByCardId(cardId);
   const participantVoteId = useParticipantVoteId(cardId);
+  const tinyBaseObjects = useTinyBaseObjects();
 
-  const handleVote = () => {
-    createVote({ participantId: getParticipantId(), cardId });
-  };
 
-  const handleUnvote = () => {
-    if (!participantVoteId) {
-      throw new Error("Can't unvote without a voteId");
-    }
-    deleteVote(participantVoteId);
-  };
+  // const handleVote = () => {
+  //   createVote({ participantId: getParticipantId(), cardId });
+  // };
+
+  const handleVote = UiReact.useSetRowCallback("votes", createId(),
+    () => ({ voterId: getParticipantId(), cardId: cardId })
+  );
+
+  // const handleUnvote = () => {
+  //   if (!participantVoteId) {
+  //     throw new Error("Can't unvote without a voteId");
+  //   }
+  //   deleteVote(participantVoteId);
+  // };
+
+  const handleUnvote = UiReact.useDelRowCallback("votes", 
+    () => {
+      if (!participantVoteId) {
+        throw new Error("Can't unvote without a voteId");
+      }
+      return participantVoteId;
+    }, undefined, undefined,
+    [participantVoteId]
+  );
 
   const handleEdit = () => {
     setEditing(true);
@@ -105,13 +121,15 @@ export function Card({ cardId, presentation }: CardProps) {
   };
 
   const handleDelete = () => {
-    deleteCard(cardId);
+    deleteCard(tinyBaseObjects, cardId);
   };
 
-  const handleSave = (data: { description: string }) => {
-    updateCard(cardId, data);
-    setEditing(false);
-  };
+  const handleSave = UiReact.useSetCellCallback("cards", cardId, "description",
+    (data: { description: string }) => {
+      return data.description;
+    }, undefined, undefined,
+    () => setEditing(false)
+  );
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -171,9 +189,11 @@ type BlankProps = {
 
 function Blank({ defaults }: BlankProps) {
   const participantId = getParticipantId();
+  const tinyBaseObjects = useTinyBaseObjects();
+
 
   const handleSave = (data: { description: string }) => {
-    createCard({
+    createCard(tinyBaseObjects, {
       participantId,
       columnId: defaults.columnId,
       description: data.description,

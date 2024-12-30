@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { getParticipantId } from "~/lib/participantId";
-import { store } from "~/lib/store";
 import { useVoteIdsByCardId } from "~/lib/useVoteIds";
+import { useTinyBaseObjects } from "./useTinyBaseObjects";
 
 export function useParticipantVoteId(cardId: string) {
+  const { store } = useTinyBaseObjects()
+
   const participantId = getParticipantId();
   const voteIds = useVoteIdsByCardId(cardId);
 

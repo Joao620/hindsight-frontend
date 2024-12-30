@@ -1,11 +1,13 @@
 import { createId } from "~/lib/createId";
-import { store } from "~/lib/store";
+import { TinyBaseObjects } from "./useTinyBaseObjects";
 
-export function createCard(data: {
+export function createCard(tinyBaseObjects: TinyBaseObjects, data: {
   participantId: string;
   columnId: string;
   description: string;
-}) {
+}) {  
+  const {store} = tinyBaseObjects;
+  
   store.transaction(() => {
     const cardId = createId();
 
@@ -17,7 +19,6 @@ export function createCard(data: {
     });
 
     const voteId = createId();
-
     store.setRow("votes", voteId, {
       cardId,
       voterId: data.participantId,

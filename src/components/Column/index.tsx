@@ -6,11 +6,12 @@ import {
 } from "react";
 import { Button } from "~/components/Button";
 import { Card } from "~/components/Card";
-import { createColumn } from "~/lib/createColumn";
+import { createId } from "~/lib/createId";
 import { deleteColumn } from "~/lib/deleteColumn";
-import { updateColumn } from "~/lib/updateColumn";
+import { UiReact } from "~/lib/store";
 import { useCardIdsByColumnId } from "~/lib/useCardIds";
 import { useColumn } from "~/lib/useColumn";
+import { useTinyBaseObjects } from "~/lib/useTinyBaseObjects";
 
 type FormProps = {
   data?: { description: string };
@@ -86,6 +87,8 @@ export function Column({ columnId, children }: ColumnProps) {
   const [editing, setEditing] = useState(false);
   const { description } = useColumn(columnId);
   const cardIds = useCardIdsByColumnId(columnId);
+  const tinyBaseObjects = useTinyBaseObjects();
+  
 
   const handleEdit = () => {
     setEditing(true);
@@ -96,13 +99,20 @@ export function Column({ columnId, children }: ColumnProps) {
   };
 
   const handleDelete = () => {
-    deleteColumn(columnId);
+    deleteColumn(tinyBaseObjects, columnId);
   };
 
-  const handleSave = (data: { description: string }) => {
-    updateColumn(columnId, data);
-    setEditing(false);
-  };
+  // const handleSave = (data: { description: string }) => {
+  //   updateColumn(columnId, data);
+  //   setEditing(false);
+  // };
+
+  const handleSave = UiReact.useSetRowCallback('columns', columnId,
+    (data: { description: string }) => 
+      ({description: data.description}),
+    undefined, undefined, 
+    () => setEditing(false)
+  )
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -152,11 +162,10 @@ export function Column({ columnId, children }: ColumnProps) {
 }
 
 function Blank() {
-  const handleSave = (data: { description: string }) => {
-    createColumn({
-      description: data.description,
-    });
-  };
+  const handleSave = UiReact.useSetRowCallback('columns', createId(), 
+    (data: { description: string }) => 
+      ({description: data.description, createdAt: Date.now()})
+  )
 
   return (
     <div className="bg-stone-100 p-3 rounded-md flex flex-col gap-3">

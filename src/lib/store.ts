@@ -8,11 +8,11 @@ import {
 } from "tinybase/with-schemas";
 import "ws";
 
-const valuesSchema = {
+export const valuesSchema = {
   timer: { type: "number", default: 0 },
 } as const;
 
-const tablesSchema = {
+export const tablesSchema = {
   participants: {
     name: { type: "string", default: "Anonymous" },
   },
@@ -34,6 +34,9 @@ const tablesSchema = {
 
 export type Schema = [typeof tablesSchema, typeof valuesSchema];
 
+/**
+ * @deprecated
+ */
 export const store = createMergeableStore()
   .setValuesSchema(valuesSchema)
   .setTablesSchema(tablesSchema);

@@ -1,8 +1,10 @@
 import { useMemo } from "react";
-import { UiReact, relationships, store } from "~/lib/store";
+import { UiReact, relationships } from "~/lib/store";
+import { TinyBaseObjects, useTinyBaseObjects } from "./useTinyBaseObjects";
 
 // Sort by column, then by votes. Break ties with card creation time.
-function compareCards(a: string, b: string) {
+function compareCards(tinyBaseObjects: TinyBaseObjects, a: string, b: string) {
+  const { store } = tinyBaseObjects;
   const cards = [store.getRow("cards", a), store.getRow("cards", b)];
 
   const votes = [
@@ -35,9 +37,13 @@ export function useCardIdsByColumnId(columnId: string) {
 }
 
 export function useSortedCardIds() {
+  const tinyBaseObjects = useTinyBaseObjects();
+
   const cardIds = UiReact.useRowIds("cards");
   const voteIds = UiReact.useRowIds("votes");
 
+  const comparisonBinded = (...args: [string, string]) => compareCards(tinyBaseObjects, ...args);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: Since we use vote count in the comparison, we need to invalidate the array when the votes change.
-  return useMemo(() => [...cardIds].sort(compareCards), [cardIds, voteIds]);
+  return useMemo(() => [...cardIds].sort(comparisonBinded), [cardIds, voteIds, tinyBaseObjects]);
 }

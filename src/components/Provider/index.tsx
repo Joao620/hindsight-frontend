@@ -1,11 +1,12 @@
-import { memo, type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { createLocalPersister } from "tinybase/persisters/persister-browser/with-schemas";
 import { createWsSynchronizer } from "tinybase/synchronizers/synchronizer-ws-client/with-schemas";
 import { getParticipantId } from "~/lib/participantId";
-import { UiReact, indexes, metrics, relationships, store } from "~/lib/store";
+import { UiReact } from "~/lib/store";
 import { useWebSocket } from "~/lib/useWebSocket";
 import { SERVER_URL, WEBSOCKET_PROTOCOL } from "~/contants";
-import { Inspector } from "tinybase/ui-react-inspector";
+
+import { useCreateTinybase } from "~/lib/useCreateTinybase";
 
 type Props = {
   boardId: string;
@@ -16,6 +17,8 @@ export function Provider({ boardId, children }: Props) {
   const participantId = getParticipantId();
 
   const [takingLongTime, setTakingLongTime] = useState(false);
+
+  const {store, relationships, indexes} = useCreateTinybase();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Participant need to be re-registered when the board changes.
   useEffect(() => {
@@ -86,7 +89,6 @@ export function Provider({ boardId, children }: Props) {
     <UiReact.Provider
       store={store}
       relationships={relationships}
-      metrics={metrics}
       indexes={indexes}
     >
       {children}
