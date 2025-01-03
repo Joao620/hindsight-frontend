@@ -104,7 +104,7 @@ function  Pagination() {
   const hasNext = index === cardIds.length - 1;
   const prevIndex = Math.max(0, index - 1);
   const nextIndex = Math.min(cardIds.length - 1, index + 1);
-  console.debug(presenting, finished)
+
 
   return (
     <div className="flex flex-grow items-center justify-end">
@@ -153,14 +153,14 @@ function  Pagination() {
 }
 
 function Audience() {
-  const participantIds = useParticipantIds();
+  const participantCount = UiReact.useValue("participants_count");
 
   return (
     <div
       className="flex items-center gap-1"
-      aria-label={`${participantIds.length} people connected.`}
+      aria-label={`${participantCount} people connected.`}
     >
-      <Icon symbol="user-square" className="text-2xl" />×{participantIds.length}
+      <Icon symbol="user-square" className="text-2xl" />×{participantCount}
     </div>
   );
 }

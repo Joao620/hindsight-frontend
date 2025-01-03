@@ -9,6 +9,7 @@ export function getParticipantId() {
       path: "/",
       expires: 3650,
     });
+    return value
   }
   return value;
 }

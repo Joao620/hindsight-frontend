@@ -14,30 +14,9 @@ type Props = {
 };
 
 export function Provider({ boardId, children }: Props) {
-  const participantId = getParticipantId();
-
   const [takingLongTime, setTakingLongTime] = useState(false);
 
   const {store, relationships, indexes} = useCreateTinybase();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Participant need to be re-registered when the board changes.
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      switch (document.visibilityState) {
-        case "visible":
-          store.setRow("participants", participantId, {});
-          break;
-        case "hidden":
-          store.delRow("participants", participantId);
-          break;
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [boardId, participantId]);
 
   UiReact.useCreatePersister(
     store,
@@ -46,10 +25,7 @@ export function Provider({ boardId, children }: Props) {
     async (persister) => {
       await persister.startAutoLoad();
       await persister.startAutoSave();
-
-      // Bug: If I set the participant row before the persister, the participants table gets overwriten.
-      store.setRow("participants", participantId, {});
-    },
+        },
   );
 
   const webSocket = useWebSocket(
