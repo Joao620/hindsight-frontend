@@ -17,27 +17,27 @@ export function Provider({ boardId, children }: Props) {
   const [takingLongTime, setTakingLongTime] = useState(false);
 
   const {store, relationships, indexes} = useCreateTinybase();
-
-  const webSocket = useWebSocket(
-    boardId ? `${WEBSOCKET_PROTOCOL}://${SERVER_URL}/${boardId}` : "",
-  );
-  setTimeout(() => {
-    if(!webSocket) setTakingLongTime(true);
-  }, 1500);
-
-  UiReact.useCreateSynchronizer(
+ 
+  const syncronizer = UiReact.useCreateSynchronizer(
     store,
-    async (store) => {
-      if (!webSocket) {
-        return;
-      }
+    async (store) => {      
+      const webSocket = new WebSocket(`${WEBSOCKET_PROTOCOL}://${SERVER_URL}/${boardId}`)
 
       const synchronizer = await createWsSynchronizer(store, webSocket);
       await synchronizer.startSync();
       return synchronizer;
     },
-    [webSocket],
+    [boardId],
   );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(!syncronizer)
+        setTakingLongTime(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [syncronizer]);
   
   UiReact.useCreatePersister(
     store,
@@ -49,7 +49,7 @@ export function Provider({ boardId, children }: Props) {
     },
   );
 
-  if (takingLongTime && !webSocket) {
+  if (takingLongTime && !syncronizer) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-lg text-gray-500 text-center">The server is starting up. <br/> This should take no more than 10 seconds.</div>
@@ -57,7 +57,7 @@ export function Provider({ boardId, children }: Props) {
     )
   }
 
-  if (!webSocket) {
+  if(!syncronizer) {
     return null;
   }
 
