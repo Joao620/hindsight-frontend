@@ -18,16 +18,6 @@ export function Provider({ boardId, children }: Props) {
 
   const {store, relationships, indexes} = useCreateTinybase();
 
-  UiReact.useCreatePersister(
-    store,
-    (store) => createLocalPersister(store, boardId),
-    [boardId],
-    async (persister) => {
-      await persister.startAutoLoad();
-      await persister.startAutoSave();
-        },
-  );
-
   const webSocket = useWebSocket(
     boardId ? `${WEBSOCKET_PROTOCOL}://${SERVER_URL}/${boardId}` : "",
   );
@@ -41,12 +31,22 @@ export function Provider({ boardId, children }: Props) {
       if (!webSocket) {
         return;
       }
-      
+
       const synchronizer = await createWsSynchronizer(store, webSocket);
-      synchronizer.startSync();
+      await synchronizer.startSync();
       return synchronizer;
     },
-    [boardId, webSocket],
+    [webSocket],
+  );
+  
+  UiReact.useCreatePersister(
+    store,
+    (store) => createLocalPersister(store, boardId),
+    [boardId],
+    async (persister) => {
+      await persister.startAutoLoad();
+      await persister.startAutoSave();
+    },
   );
 
   if (takingLongTime && !webSocket) {

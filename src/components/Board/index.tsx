@@ -1,16 +1,14 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useValue } from "tinybase/ui-react";
 import { Link, useParams, useRoute } from "wouter";
 import { Button } from "~/components/Button";
 import { Footer } from "~/components/Footer";
 import { Icon } from "~/components/Icon";
 import { Provider } from "~/components/Provider";
 import { UiReact } from "~/lib/store";
-import { useBoard } from "~/lib/useBoard";
 import { useSortedCardIds } from "~/lib/useCardIds";
-import { useInterval } from "~/lib/useInterval";
-import { useParticipantIds } from "~/lib/useParticipantIds";
 
-function format(timestamp: number) {
+function formatTimeRemaining(timestamp: number) {
   const delta = Math.ceil((timestamp - Date.now()) / 1000);
 
   const m = Math.floor(delta / 60);
@@ -20,22 +18,38 @@ function format(timestamp: number) {
 }
 
 type DisplayProps = {
-  onClick: () => void;
-  value: number;
+  endingTimeStamp: number;
+  running: boolean;
 };
 
-function Display({ value, onClick }: DisplayProps) {
-  const [, update] = useState({});
+function Display({ endingTimeStamp, running }: DisplayProps) {
+  const [formatedTimeLeft, setTimeLeft] = useState("")
 
-  useInterval(() => {
-    update({});
-  }, 50);
+  useEffect(() => {
+    let updateTimerInterval: NodeJS.Timeout;
 
-  if (value < Date.now()) {
+    if (running && endingTimeStamp > Date.now()) {
+      setTimeLeft(formatTimeRemaining(endingTimeStamp));
+
+      updateTimerInterval = setInterval(() => {
+        setTimeLeft(formatTimeRemaining(endingTimeStamp));
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(updateTimerInterval);
+    };
+  }, [endingTimeStamp, running]);
+
+  const handleNotifRequest = () => {
+    Notification.requestPermission();
+  };
+
+  if (!running) {
     return (
       <button
         type="button"
-        onClick={onClick}
+        onClick={handleNotifRequest}
         className="font-mono text-lg text-white px-4 py-2 rounded-3xl bg-stone-400"
       >
         00:00
@@ -46,44 +60,51 @@ function Display({ value, onClick }: DisplayProps) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={handleNotifRequest}
       className="font-mono text-lg text-white px-4 py-2 rounded-3xl bg-lime-600"
     >
-      {format(value)}
+      {formatedTimeLeft}
     </button>
   );
 }
 
 export function Timer() {
-  const { timer } = useBoard();
-  const [active, setActive] = useState(timer > Date.now());
-
-  useInterval(() => {
-    setActive(timer > Date.now());
-
-    if (active && timer > 0 && Date.now() > timer) {
-      new Notification("Time is up!");
-    }
-  }, 50);
-
-  const handleNotifRequest = () => {
-    Notification.requestPermission();
-  };
+  const timer = UiReact.useValue('timer') || 0;
+  const [timeRunning, setTimeRunning] = useState(timer > Date.now());
 
   const setTimerCallback = UiReact.useSetValueCallback("timer", (value: number) => value);
-  const plus5min = () => setTimerCallback(Math.max(Date.now(), timer) + 5 * 60 * 1000)
+  const plus5min = () => setTimerCallback(Math.max(Date.now(), timer) + 5 * 5 * 1000)
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (timer > Date.now()) {
+      setTimeRunning(true);
+
+      timeout = setTimeout(() => {
+        new Notification("Time is up!");
+        setTimeRunning(false);
+
+      }, timer - Date.now());
+    } else {  
+      setTimeRunning(false);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [timer]);
 
   return (
     <div className="flex items-center gap-3">
       <Button
         variant="negative"
         onClick={() => setTimerCallback(0)}
-        disabled={!active}
+        disabled={!timeRunning}
       >
         Clear
       </Button>
 
-      <Display value={timer} onClick={handleNotifRequest} />
+      <Display endingTimeStamp={timer} running={timeRunning} />
 
       <Button onClick={plus5min} >
         +5 min.
@@ -104,7 +125,6 @@ function  Pagination() {
   const hasNext = index === cardIds.length - 1;
   const prevIndex = Math.max(0, index - 1);
   const nextIndex = Math.min(cardIds.length - 1, index + 1);
-
 
   return (
     <div className="flex flex-grow items-center justify-end">
@@ -164,7 +184,6 @@ function Audience() {
     </div>
   );
 }
-
 type BoardProps = {
   children: ReactNode;
 };

@@ -8,6 +8,8 @@ export function getParticipantId() {
     Cookies.set("participantId", value, {
       path: "/",
       expires: 3650,
+      sameSite: "none",
+      secure: true,
     });
     return value
   }
