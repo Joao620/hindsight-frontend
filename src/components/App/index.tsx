@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Route, Switch } from "wouter";
+import { Route, Router, Switch } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import { HTTP_PROTOCOL, SERVER_URL } from "~/contants";
 import Missing from "~/pages/404";
 import Card from "~/pages/Card";
@@ -17,20 +18,22 @@ export function App() {
   
   return (
     <div className="mx-auto min-w-[64rem]">
-      <Switch>
-        <Route path="/" component={Welcome} />
-        <Route path="/boards" component={Boards} />
-        <Route path="/boards/:boardId" nest >
-          <Board>
-            <Switch>
-              <Route path="/" component={dale} />
-              <Route path="/cards/:cardId" component={Card} />
-              <Route path="/finished" component={Finished} />
-            </Switch>
-          </Board>
-        </Route>
-        <Route component={Missing} />
-      </Switch>
+      <Router hook={useHashLocation}>
+        <Switch>
+          <Route path="/" component={Welcome} />
+          <Route path="/boards" component={Boards} />
+          <Route path="/boards/:boardId" nest >
+            <Board>
+              <Switch>
+                <Route path="/" component={dale} />
+                <Route path="/cards/:cardId" component={Card} />
+                <Route path="/finished" component={Finished} />
+              </Switch>
+            </Board>
+          </Route>
+          <Route component={Missing} />
+        </Switch>
+      </Router>
     </div>
   );
 }
