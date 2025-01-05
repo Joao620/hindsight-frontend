@@ -10,7 +10,7 @@ import "ws";
 
 export const valuesSchema = {
   timer: { type: "number" },
-  participants_count: { type: "number", default: 0 },
+  participants_count: { type: "number" },
 } as const;
 
 export const tablesSchema = {
