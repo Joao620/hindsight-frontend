@@ -73,7 +73,7 @@ export function Timer() {
   const [timeRunning, setTimeRunning] = useState(timer > Date.now());
 
   const setTimerCallback = UiReact.useSetValueCallback("timer", (value: number) => value);
-  const plus5min = () => setTimerCallback(Math.max(Date.now(), timer) + 5 * 5 * 1000)
+  const plus5min = () => setTimerCallback(Math.max(Date.now(), timer) + 5 * 60 * 1000)
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
