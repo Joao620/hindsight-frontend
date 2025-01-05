@@ -16,7 +16,7 @@ const renameIndexPlugin = (newFilename: string): import('vite').Plugin => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), react(), renameIndexPlugin('404.html')],
+  plugins: [tsconfigPaths(), react()],
   build: {
     rollupOptions: {
       output: {
