@@ -9,6 +9,7 @@ import Welcome from "~/pages/Welcome";
 import { Board } from "../Board";
 import Boards from "~/pages/Boards";
 import dale from "~/pages/Board";
+import UsPage from "~/pages/Us";
 
 export function App() {
   useEffect(() => {
@@ -31,6 +32,7 @@ export function App() {
               </Switch>
             </Board>
           </Route>
+          <Route path="/us" component={UsPage} />
           <Route component={Missing} />
         </Switch>
       </Router>
