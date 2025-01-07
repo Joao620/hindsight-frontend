@@ -7,6 +7,7 @@ import { useWebSocket } from "~/lib/useWebSocket";
 import { SERVER_URL, WEBSOCKET_PROTOCOL } from "~/contants";
 
 import { useCreateTinybase } from "~/lib/useCreateTinybase";
+import { Link } from "wouter";
 
 type Props = {
   boardId: string;
@@ -15,13 +16,26 @@ type Props = {
 
 export function Provider({ boardId, children }: Props) {
   const [takingLongTime, setTakingLongTime] = useState(false);
+  const [webSocketError, setWebSocketError] = useState<Boolean>(false);
 
   const {store, relationships, indexes} = useCreateTinybase();
  
   const syncronizer = UiReact.useCreateSynchronizer(
     store,
-    async (store) => {      
+    async (store) => { 
+
       const webSocket = new WebSocket(`${WEBSOCKET_PROTOCOL}://${SERVER_URL}/${boardId}`)
+
+      try {
+        await new Promise<void>((resolve, reject) => {
+          webSocket.onopen = () => resolve();
+          webSocket.onerror = (error) => reject(error);
+        });
+      } catch (error) {
+        setWebSocketError(true);
+        console.log('An error occured', webSocket, error);
+        return;
+      }
 
       const synchronizer = await createWsSynchronizer(store, webSocket);
       await synchronizer.startSync();
@@ -48,6 +62,24 @@ export function Provider({ boardId, children }: Props) {
       await persister.startAutoSave();
     },
   );
+
+  if (webSocketError) {
+    return (
+      <div className="flex items-center flex-col justify-center">
+        <div className="text-lg text-red-600 font-bold text-center">
+          An error occurred while connecting to the server. 
+          <br/> 
+          If the issue persists, please send an email.
+          <br/>
+          <a href="mailto:support@hindsight-for.teams" className="text-blue-600 underline">support@hindsight-for.teams</a>
+        </div>
+        <br/>
+        <div className="text-lg text-red-600 font-bold text-center">
+          <Link href="~/" className="text-blue-600 underline">Go back to the home page</Link>
+        </div>
+      </div>
+    )
+  }
 
   if (takingLongTime && !syncronizer) {
     return (
