@@ -11,7 +11,7 @@ export default function Page() {
             <p>His Github account: <a href="https://github.com/haggen/" className="underline">github.com/haggen</a></p>
 
             <br />
-            <p>Now I, <span className="font-bold">João</span>, have made a fork of the project, and am hosting what are you seeing!</p>
+            <p>Now I, <span className="font-bold">João</span>, made a fork of the project and I'm hosting what are you seeing!</p>
             
             <p>My Github account: <a href="https://github.com/Joao620/" className="underline">github.com/Joao620</a></p>
             <p>My blog (in Portuguese): <a href="https://weblog.hagaka.me/" className="underline">weblog.hagaka.me</a></p>
