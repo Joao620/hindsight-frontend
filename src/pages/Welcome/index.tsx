@@ -19,11 +19,10 @@ export default function Page() {
           <ul className="text-sm flex gap-6">
             <li className="flex items-center gap-1">
               <Icon symbol="check-square" className="text-lg" /> Free,
-              open-source, no sign-up required.
+              open-source, without sign-up.
             </li>
             <li className="flex items-center gap-1">
-              <Icon symbol="check-square" className="text-lg" /> Locally stored,
-              no ads, no telemetry.
+              <Icon symbol="check-square" className="text-lg" />No ads, no telemetry, locally persisted data.
             </li>
           </ul>
         </div>
