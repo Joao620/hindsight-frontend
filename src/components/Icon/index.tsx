@@ -61,6 +61,19 @@ const symbols = {
     <g stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 3a1 1 0 0 1 0 2h-6a1 1 0 1 1 0 -2z" /><path d="M20 3a1 1 0 0 1 0 2h-6a1 1 0 0 1 0 -2z" /><path d="M8 7a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z" /><path d="M18 7a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-2a3 3 0 0 1 -3 -3v-2a3 3 0 0 1 3 -3z" />
     </g>
+  ),
+  "volume-up": (
+    <g>
+      <path fill="currentColor" d="M3 10v4a1 1 0 0 0 1 1h3l4 4V5l-4 4H4a1 1 0 0 0-1 1Z" />
+      <path fill="currentColor" d="M16.5 12a4.5 4.5 0 0 1-1.636 3.485 1 1 0 1 0 1.272 1.554A6.5 6.5 0 0 0 18.5 12a6.5 6.5 0 0 0-2.364-5.039 1 1 0 1 0-1.272 1.554A4.5 4.5 0 0 1 16.5 12Z" />
+      <path fill="currentColor" d="M19.5 12c0 1.77-.77 3.37-2 4.5a1 1 0 0 0 1.33 1.497A8.5 8.5 0 0 0 21.5 12a8.5 8.5 0 0 0-3.67-7.01 1 1 0 1 0-1.33 1.497 6.5 6.5 0 0 1 2 4.51Z" />
+    </g>
+  ),
+  "volume-off": (
+    <g>
+      <path fill="currentColor" d="M3 10v4a1 1 0 0 0 1 1h3l4 4V5l-4 4H4a1 1 0 0 0-1 1Z" />
+      <path fill="currentColor" d="M14.293 9.293a1 1 0 0 1 1.414 0L17 10.586l1.293-1.293a1 1 0 1 1 1.414 1.414L18.414 12l1.293 1.293a1 1 0 1 1-1.414 1.414L17 13.414l-1.293 1.293a1 1 0 0 1-1.414-1.414L15.586 12l-1.293-1.293a1 1 0 0 1 0-1.414Z" />
+    </g>
   )
 } as const;
 
