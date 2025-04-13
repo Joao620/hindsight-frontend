@@ -1,3 +1,4 @@
+// biome-ignore lint: porque eu quero
 const symbols = {
   "user-square": (
     <g>
@@ -60,6 +61,11 @@ const symbols = {
   "table": (
     <g stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 3a1 1 0 0 1 0 2h-6a1 1 0 1 1 0 -2z" /><path d="M20 3a1 1 0 0 1 0 2h-6a1 1 0 0 1 0 -2z" /><path d="M8 7a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z" /><path d="M18 7a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-2a3 3 0 0 1 -3 -3v-2a3 3 0 0 1 3 -3z" />
+    </g>
+  ),
+  "mic": (
+    <g stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" />
     </g>
   )
 } as const;

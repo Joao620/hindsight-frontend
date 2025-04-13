@@ -9,6 +9,8 @@ import { useCard } from "~/lib/useCard";
 import { useParticipantVoteId } from "~/lib/useParticipantVoteId";
 import { useTinyBaseObjects } from "~/lib/useTinyBaseObjects";
 import { useVoteIdsByCardId } from "~/lib/useVoteIds";
+import { Icon } from "../Icon";
+import { MicPopup } from "../MicPopup";
 
 type FormProps = {
   data?: { description: string };
@@ -16,7 +18,7 @@ type FormProps = {
   onDelete?: () => void;
   onCancel?: () => void;
 };
-
+//data é um péssimo nome, é meio que o texto atual ao clicar 'edit' no card
 function Form({ data, onSave, onDelete, onCancel }: FormProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,18 +41,21 @@ function Form({ data, onSave, onDelete, onCancel }: FormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <textarea
-        rows={3}
-        name="description"
-        placeholder="Type something..."
-        aria-label="Card"
-        autoComplete="off"
-        defaultValue={data?.description}
-        // biome-ignore lint/a11y/noAutofocus: <explanation>
-        autoFocus
-        onKeyDown={handleKeyDown}
-        required
-      />
+      <div className="relative flex flex-col gap-3" onClickCapture={(e) => e.preventDefault()}>
+        <textarea
+          rows={3}
+          name="description"
+          placeholder="Type something..."
+          aria-label="Card"
+          autoComplete="off"
+          defaultValue={data?.description}
+          // biome-ignore lint/a11y/noAutofocus: <explanation>
+          autoFocus
+          onKeyDown={handleKeyDown}
+          required
+        />
+        <MicPopup className="absolute right-3 bottom-0"></MicPopup>
+      </div>
 
       {data ? (
         <footer className="flex items-center gap-3 justify-between">
@@ -86,14 +91,14 @@ export function Card({ cardId, presentation }: CardProps) {
   const participantVoteId = useParticipantVoteId(cardId);
   const tinyBaseObjects = useTinyBaseObjects();
 
-
   // const handleVote = () => {
   //   createVote({ participantId: getParticipantId(), cardId });
   // };
 
-  const handleVote = UiReact.useSetRowCallback("votes", createId(),
-    () => ({ voterId: getParticipantId(), cardId: cardId })
-  );
+  const handleVote = UiReact.useSetRowCallback("votes", createId(), () => ({
+    voterId: getParticipantId(),
+    cardId: cardId,
+  }));
 
   // const handleUnvote = () => {
   //   if (!participantVoteId) {
@@ -102,14 +107,17 @@ export function Card({ cardId, presentation }: CardProps) {
   //   deleteVote(participantVoteId);
   // };
 
-  const handleUnvote = UiReact.useDelRowCallback("votes", 
+  const handleUnvote = UiReact.useDelRowCallback(
+    "votes",
     () => {
       if (!participantVoteId) {
         throw new Error("Can't unvote without a voteId");
       }
       return participantVoteId;
-    }, undefined, undefined,
-    [participantVoteId]
+    },
+    undefined,
+    undefined,
+    [participantVoteId],
   );
 
   const handleEdit = () => {
@@ -124,11 +132,16 @@ export function Card({ cardId, presentation }: CardProps) {
     deleteCard(tinyBaseObjects, cardId);
   };
 
-  const handleSave = UiReact.useSetCellCallback("cards", cardId, "description",
+  const handleSave = UiReact.useSetCellCallback(
+    "cards",
+    cardId,
+    "description",
     (data: { description: string }) => {
       return data.description;
-    }, undefined, undefined,
-    () => setEditing(false)
+    },
+    undefined,
+    undefined,
+    () => setEditing(false),
   );
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -190,7 +203,6 @@ type BlankProps = {
 function Blank({ defaults }: BlankProps) {
   const participantId = getParticipantId();
   const tinyBaseObjects = useTinyBaseObjects();
-
 
   const handleSave = (data: { description: string }) => {
     createCard(tinyBaseObjects, {

@@ -88,7 +88,6 @@ export function Column({ columnId, children }: ColumnProps) {
   const { description } = useColumn(columnId);
   const cardIds = useCardIdsByColumnId(columnId);
   const tinyBaseObjects = useTinyBaseObjects();
-  
 
   const handleEdit = () => {
     setEditing(true);
@@ -107,12 +106,14 @@ export function Column({ columnId, children }: ColumnProps) {
   //   setEditing(false);
   // };
 
-  const handleSave = UiReact.useSetRowCallback('columns', columnId,
-    (data: { description: string }) => 
-      ({description: data.description}),
-    undefined, undefined, 
-    () => setEditing(false)
-  )
+  const handleSave = UiReact.useSetRowCallback(
+    "columns",
+    columnId,
+    (data: { description: string }) => ({ description: data.description }),
+    undefined,
+    undefined,
+    () => setEditing(false),
+  );
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -162,10 +163,14 @@ export function Column({ columnId, children }: ColumnProps) {
 }
 
 function Blank() {
-  const handleSave = UiReact.useSetRowCallback('columns', createId(), 
-    (data: { description: string }) => 
-      ({description: data.description, createdAt: Date.now()})
-  )
+  const handleSave = UiReact.useSetRowCallback(
+    "columns",
+    createId(),
+    (data: { description: string }) => ({
+      description: data.description,
+      createdAt: Date.now(),
+    }),
+  );
 
   return (
     <div className="bg-stone-100 p-3 rounded-md flex flex-col gap-3">
