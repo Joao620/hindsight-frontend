@@ -1,4 +1,4 @@
-import { type FormEvent, type KeyboardEvent, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useRef, useState } from "react";
 import { Button } from "~/components/Button";
 import { createCard } from "~/lib/createCard";
 import { createId } from "~/lib/createId";
@@ -20,6 +20,8 @@ type FormProps = {
 };
 //data é um péssimo nome, é meio que o texto atual ao clicar 'edit' no card
 function Form({ data, onSave, onDelete, onCancel }: FormProps) {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const payload = new FormData(event.currentTarget);
@@ -39,6 +41,12 @@ function Form({ data, onSave, onDelete, onCancel }: FormProps) {
     }
   };
 
+  const writeTranscribedText = (text: string) => {
+    if (textAreaRef.current) {
+        textAreaRef.current.value += text.trim();
+      }
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <div className="relative flex flex-col gap-3" onClickCapture={(e) => e.preventDefault()}>
@@ -52,9 +60,10 @@ function Form({ data, onSave, onDelete, onCancel }: FormProps) {
           // biome-ignore lint/a11y/noAutofocus: <explanation>
           autoFocus
           onKeyDown={handleKeyDown}
+          ref={textAreaRef}
           required
         />
-        <MicPopup className="absolute right-3 bottom-0"></MicPopup>
+        <MicPopup className="absolute right-3 bottom-0" writeTranscribedText={writeTranscribedText}></MicPopup>
       </div>
 
       {data ? (
