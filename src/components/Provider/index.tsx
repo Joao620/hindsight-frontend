@@ -19,12 +19,12 @@ export function Provider({ boardId, children }: Props) {
   const [webSocketError, setWebSocketError] = useState<Boolean>(false);
 
   const {store, relationships, indexes} = useCreateTinybase();
- 
+
   const syncronizer = UiReact.useCreateSynchronizer(
     store,
-    async (store) => { 
+    async (store) => {
 
-      const webSocket = new WebSocket(`${WEBSOCKET_PROTOCOL}://${SERVER_URL}/${boardId}`)
+      const webSocket = new WebSocket(`${WEBSOCKET_PROTOCOL}://${SERVER_URL}/room/${boardId}`)
 
       try {
         await new Promise<void>((resolve, reject) => {
@@ -52,7 +52,7 @@ export function Provider({ boardId, children }: Props) {
 
     return () => clearTimeout(timer);
   }, [syncronizer]);
-  
+
   UiReact.useCreatePersister(
     store,
     (store) => createLocalPersister(store, boardId),
@@ -67,8 +67,8 @@ export function Provider({ boardId, children }: Props) {
     return (
       <div className="flex items-center flex-col justify-center">
         <div className="text-lg text-red-600 font-bold text-center">
-          An error occurred while connecting to the server. 
-          <br/> 
+          An error occurred while connecting to the server.
+          <br/>
           If the issue persists, please send an email.
           <br/>
           <a href="mailto:support@hindsight-for.teams" className="text-blue-600 underline">support@hindsight-for.teams</a>
