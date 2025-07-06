@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="flex items-center justify-center min-h-16">
       <p>
         Made by{" "}
-        <Link href="/us" className="underline">us</Link>
+        <Link href="~/us" className="underline">us</Link>
 
       </p>
     </footer>

@@ -32,7 +32,7 @@ export function App() {
               </Switch>
             </Board>
           </Route>
-          <Route path="/us" component={UsPage} />
+          <Route path="~/us" component={UsPage} />
           <Route component={Missing} />
         </Switch>
       </Router>
