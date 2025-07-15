@@ -1,10 +1,10 @@
-const local = true
+const isDevelopment = import.meta.env.DEV
 
 let SERVER_URL: string
 let WEBSOCKET_PROTOCOL: string
 let HTTP_PROTOCOL: string
 
-if (local){
+if (isDevelopment) {
     SERVER_URL = "localhost:5000"
     WEBSOCKET_PROTOCOL = "ws"
     HTTP_PROTOCOL = "http"
