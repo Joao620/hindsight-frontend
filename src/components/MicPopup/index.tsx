@@ -22,7 +22,7 @@ export function MicPopup({ className, writeTranscribedText }: MicPopupProps) {
   return (
     <div className={className}>
       <button onClick={advanceState}>
-        {recordingState.kind !== AudioStates.Sending ? (
+        {recordingState.kind !== AudioStates.Sending && recordingState.kind !== AudioStates.Polling ? (
           <AnimatedMicIcon
             recording={recordingState.kind === AudioStates.Hearing}
             blocked={recordingState.kind === AudioStates.Error}
@@ -57,7 +57,8 @@ function getTipText(state: AudioStateUnion) {
     case AudioStates.Processing:
       return "You can speak now!";
     case AudioStates.Sending:
-      return "Processing your audio...";
+    case AudioStates.Polling:
+      return "Waiting for transcription results...";
     case AudioStates.Canceling:
       return "Cancelling the request";
     case AudioStates.Error:
