@@ -33,8 +33,8 @@ export interface PollingConfig {
 }
 
 export const POLLING_CONFIG: PollingConfig = {
-  interval: 1000, // Fixed 1 second intervals
-  maxRetries: 30, // Maximum 30 polling attempts (~30 seconds total)
+  interval: 1000,
+  maxRetries: 180,
 };
 
 // Polling Interval Management Utilities
