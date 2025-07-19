@@ -9,7 +9,7 @@ if (isDevelopment) {
     WEBSOCKET_PROTOCOL = "ws"
     HTTP_PROTOCOL = "http"
 } else {
-    SERVER_URL = "https://hindsight-c49366b607ea.herokuapp.com"
+    SERVER_URL = "hindsight-c49366b607ea.herokuapp.com"
     WEBSOCKET_PROTOCOL = "wss"
     HTTP_PROTOCOL = "https"
 }
