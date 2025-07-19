@@ -28,29 +28,16 @@ const statusToErrorMessage = new Map<number, string>([
 
 // Polling Configuration
 export interface PollingConfig {
-  initialInterval: number; // 1000ms
-  maxInterval: number; // 5000ms
-  backoffMultiplier: number; // 1.5
-  maxRetries: number; // 30 (total ~2-3 minutes)
+  interval: number; // Fixed polling interval
+  maxRetries: number; // Maximum polling attempts
 }
 
 export const POLLING_CONFIG: PollingConfig = {
-  initialInterval: 1000, // Start with 1 second intervals
-  maxInterval: 5000, // Cap at 5 second intervals
-  backoffMultiplier: 1.5, // Increase interval by 50% each time
-  maxRetries: 30, // Maximum 30 polling attempts (~2-3 minutes total)
+  interval: 1000, // Fixed 1 second intervals
+  maxRetries: 30, // Maximum 30 polling attempts (~30 seconds total)
 };
 
 // Polling Interval Management Utilities
-export function calculateNextPollingInterval(
-  currentPollCount: number,
-  config: PollingConfig = POLLING_CONFIG,
-): number {
-  const exponentialInterval =
-    config.initialInterval * config.backoffMultiplier ** currentPollCount;
-  return Math.min(exponentialInterval, config.maxInterval);
-}
-
 export function shouldStopPolling(
   currentPollCount: number,
   config: PollingConfig = POLLING_CONFIG,
@@ -195,11 +182,8 @@ export async function pollTranscriptionStatus(
           pollCount: nextPollCount,
         });
 
-        // Calculate next polling interval
-        const nextInterval = calculateNextPollingInterval(pollCount, config);
-
-        // Wait for the polling interval
-        await createPollingDelay(nextInterval, abortController);
+        // Wait for the fixed polling interval
+        await createPollingDelay(config.interval, abortController);
 
         // Continue polling recursively
         await pollTranscriptionStatus(
