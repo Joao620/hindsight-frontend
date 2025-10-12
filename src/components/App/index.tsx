@@ -16,14 +16,14 @@ export function App() {
     fetch(`${HTTP_PROTOCOL}://${SERVER_URL}/wake-up`);
     console.log("Waking up the server.");
   }, []);
-  
+
   return (
     <div className="mx-auto min-w-[64rem]">
       <Router hook={useHashLocation}>
         <Switch>
           <Route path="/" component={Welcome} />
           <Route path="/boards" component={Boards} />
-          <Route path="/boards/:boardId" nest >
+          <Route path="/boards/:boardId" nest>
             <Board>
               <Switch>
                 <Route path="/" component={dale} />
@@ -32,7 +32,7 @@ export function App() {
               </Switch>
             </Board>
           </Route>
-          <Route path="~/us" component={UsPage} />
+          <Route path="/us" component={UsPage} />
           <Route component={Missing} />
         </Switch>
       </Router>
