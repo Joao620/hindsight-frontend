@@ -408,11 +408,6 @@ export function useRecordingState(
     }
   }, [recordingState]);
 
-  // Cleanup effect to ensure proper resource cleanup during unmount only
-  useEffect(() => {
-    console.log("my state is: ", recordingState)
-  }, [recordingState]);
-
   // Cleanup effect that only runs on unmount
   useEffect(() => {
     return () => {
