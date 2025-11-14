@@ -1,15 +1,14 @@
 import { createIndexes, createMergeableStore, createRelationships } from "tinybase/with-schemas";
 import { UiReact, valuesSchema, tablesSchema } from "./store";
 
-export function useCreateTinybase() {
-    
+export function useCreateTinybase(boardId: string) {
     const store = UiReact.useCreateMergeableStore(() => {
         const createdStore = createMergeableStore()
             .setValuesSchema(valuesSchema)
             .setTablesSchema(tablesSchema);
 
         return createdStore
-    })
+    }, [boardId])
 
     const relationships = UiReact.useCreateRelationships(store, (store) => {
         const relationships = createRelationships(store);

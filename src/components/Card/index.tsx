@@ -63,7 +63,7 @@ function Form({ data, onSave, onDelete, onCancel }: FormProps) {
           ref={textAreaRef}
           required
         />
-        <MicPopup className="absolute right-3 bottom-0" writeTranscribedText={writeTranscribedText}></MicPopup>
+        {/*<MicPopup className="absolute right-3 bottom-0" writeTranscribedText={writeTranscribedText}></MicPopup>*/}
       </div>
 
       {data ? (

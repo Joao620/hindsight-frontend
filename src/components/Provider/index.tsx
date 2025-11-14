@@ -1,9 +1,7 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { createLocalPersister } from "tinybase/persisters/persister-browser/with-schemas";
 import { createWsSynchronizer } from "tinybase/synchronizers/synchronizer-ws-client/with-schemas";
-import { getParticipantId } from "~/lib/participantId";
 import { UiReact } from "~/lib/store";
-import { useWebSocket } from "~/lib/useWebSocket";
 import { SERVER_URL, WEBSOCKET_PROTOCOL } from "~/contants";
 
 import { useCreateTinybase } from "~/lib/useCreateTinybase";
@@ -18,12 +16,11 @@ export function Provider({ boardId, children }: Props) {
   const [takingLongTime, setTakingLongTime] = useState(false);
   const [webSocketError, setWebSocketError] = useState<Boolean>(false);
 
-  const {store, relationships, indexes} = useCreateTinybase();
+  const {store, relationships, indexes} = useCreateTinybase(boardId);
 
   const syncronizer = UiReact.useCreateSynchronizer(
     store,
     async (store) => {
-
       const webSocket = new WebSocket(`${WEBSOCKET_PROTOCOL}://${SERVER_URL}/room/${boardId}`)
 
       try {
@@ -38,10 +35,13 @@ export function Provider({ boardId, children }: Props) {
       }
 
       const synchronizer = await createWsSynchronizer(store, webSocket);
-      await synchronizer.startSync();
+      await synchronizer.startSync(); //TODO: Maybe a dont need this, test it later
       return synchronizer;
     },
-    [boardId],
+    [store],
+    (synchronizer) => {
+      const webSocket = (synchronizer as any).getWebSocket();
+    },
   );
 
   useEffect(() => {
