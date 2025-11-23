@@ -38,10 +38,7 @@ export function Provider({ boardId, children }: Props) {
       await synchronizer.startSync(); //TODO: Maybe a dont need this, test it later
       return synchronizer;
     },
-    [store],
-    (synchronizer) => {
-      const webSocket = (synchronizer as any).getWebSocket();
-    },
+    [store]
   );
 
   useEffect(() => {

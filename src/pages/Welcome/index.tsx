@@ -4,8 +4,18 @@ import { Icon } from "~/components/Icon";
 
 export default function Page() {
   return (
-    <div className="grid grid-rows-[1fr_auto] h-dvh">
-      <div className="grid grid-rows-[1fr_auto_1fr] gap-12">
+    <div className="grid grid-rows-[1fr_auto] h-dvh relative">
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 shadow-lg max-w-lg">
+        <p className="text-sm">
+          <strong className="text-yellow-800">Notice:</strong> This site will be discontinued on January 1st.{" "}
+          <strong className="text-yellow-700">But don't worry!</strong> The original hosting is back online. Please use{" "}
+          <a href="https://hindsight.crz.li/" target="_blank" rel="noopener noreferrer"
+             className="text-blue-600 underline font-semibold">
+               hindsight.crz.li
+          </a>
+        </p>
+      </div>
+      <div className="grid grid-rows-[1fr_auto_1fr] gap-12 mt-12">
         <div className="flex flex-col items-center justify-end gap-1.5">
           <Link href="/">
             <h2 className="text-4xl font-black">Hindsight</h2>

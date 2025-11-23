@@ -188,6 +188,47 @@ type BoardProps = {
   children: ReactNode;
 };
 
+// Dismissible announcement component
+function Announcement() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Check if announcement has been dismissed before
+    const hasSeenAnnouncement = localStorage.getItem('hindsight-announcement-seen');
+    if (!hasSeenAnnouncement) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  const handleClose = () => {
+    localStorage.setItem('hindsight-announcement-seen', 'true');
+    setIsVisible(false);
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="bg-blue-50 border-b border-blue-200 p-3 relative rounded">
+      <button
+        onClick={handleClose}
+        className="absolute right-3 top-3 text-blue-600 hover:text-blue-800 text-xl font-bold"
+        aria-label="Close announcement"
+      >
+        ✕
+      </button>
+      <p className="text-sm pr-8">
+        <strong className="text-blue-800">Important notice:</strong> This fork will be discontinued on January 1st, but don't worry!
+        The original hosting is back online. Please use{" "}
+        <a href="https://hindsight.crz.li" target="_blank" rel="noopener noreferrer"
+           className="text-blue-600 underline font-semibold">
+             hindsight.crz.li
+        </a>{" "}
+        for the latest version and continued support.
+      </p>
+    </div>
+  );
+}
+
 export function Board({ children }: BoardProps) {
   const {boardId} = useParams();
   if (!boardId) {
@@ -197,6 +238,7 @@ export function Board({ children }: BoardProps) {
   return (
     <Provider boardId={boardId}>
       <div className="flex flex-col px-6 h-dvh">
+        <Announcement />
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-12 h-24">
             <div className="flex items-center flex-grow justify-between">
               <h1 className="text-2xl font-black">
